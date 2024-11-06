@@ -3,11 +3,12 @@ import type { Schema, Struct } from '@strapi/strapi';
 export interface SizeOptionSizeOption extends Struct.ComponentSchema {
   collectionName: 'components_size_option_size_options';
   info: {
+    description: '';
     displayName: 'Size Option';
   };
   attributes: {
-    price: Schema.Attribute.Decimal & Schema.Attribute.Required;
-    size: Schema.Attribute.String & Schema.Attribute.Required;
+    drink_size: Schema.Attribute.String & Schema.Attribute.Required;
+    item_price: Schema.Attribute.Decimal & Schema.Attribute.Required;
   };
 }
 

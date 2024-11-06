@@ -381,6 +381,8 @@ export interface ApiDrinkAddOnDrinkAddOn extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    addons_name: Schema.Attribute.String & Schema.Attribute.Required;
+    addons_price: Schema.Attribute.Decimal & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -394,8 +396,6 @@ export interface ApiDrinkAddOnDrinkAddOn extends Struct.CollectionTypeSchema {
       'api::drink-add-on.drink-add-on'
     > &
       Schema.Attribute.Private;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
-    price: Schema.Attribute.Decimal & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -407,6 +407,7 @@ export interface ApiDrinkCategoryDrinkCategory
   extends Struct.CollectionTypeSchema {
   collectionName: 'drink_categories';
   info: {
+    description: '';
     displayName: 'Drink Category';
     pluralName: 'drink-categories';
     singularName: 'drink-category';
@@ -415,6 +416,7 @@ export interface ApiDrinkCategoryDrinkCategory
     draftAndPublish: true;
   };
   attributes: {
+    category_name: Schema.Attribute.String & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -428,7 +430,6 @@ export interface ApiDrinkCategoryDrinkCategory
       'api::drink-category.drink-category'
     > &
       Schema.Attribute.Private;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

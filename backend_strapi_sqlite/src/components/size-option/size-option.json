@@ -1,15 +1,16 @@
 {
   "collectionName": "components_size_option_size_options",
   "info": {
-    "displayName": "Size Option"
+    "displayName": "Size Option",
+    "description": ""
   },
   "options": {},
   "attributes": {
-    "size": {
+    "drink_size": {
       "type": "string",
       "required": true
     },
-    "price": {
+    "item_price": {
       "type": "decimal",
       "required": true
     }

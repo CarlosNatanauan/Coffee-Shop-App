@@ -12,7 +12,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "name": {
+    "addons_name": {
       "type": "string",
       "required": true
     },
@@ -22,7 +22,7 @@
       "target": "api::drink-item.drink-item",
       "mappedBy": "add_ons"
     },
-    "price": {
+    "addons_price": {
       "required": true,
       "type": "decimal"
     }
