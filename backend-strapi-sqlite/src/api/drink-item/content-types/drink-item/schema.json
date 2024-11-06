@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "drink_items",
+  "info": {
+    "singularName": "drink-item",
+    "pluralName": "drink-items",
+    "displayName": "Drink Item",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": true,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::drink-category.drink-category",
+      "inversedBy": "drink_items"
+    },
+    "addOnsEnabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "add_ons": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::drink-add-on.drink-add-on",
+      "inversedBy": "drink_items"
+    },
+    "sizeOptions": {
+      "type": "component",
+      "repeatable": true,
+      "component": "size-option.size-option"
+    }
+  }
+}

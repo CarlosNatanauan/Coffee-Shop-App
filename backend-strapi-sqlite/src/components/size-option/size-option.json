@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_size_option_size_options",
+  "info": {
+    "displayName": "Size Option"
+  },
+  "options": {},
+  "attributes": {
+    "size": {
+      "type": "string",
+      "required": true
+    },
+    "price": {
+      "type": "decimal",
+      "required": true
+    }
+  }
+}

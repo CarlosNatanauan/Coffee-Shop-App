@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "drink_add_ons",
+  "info": {
+    "singularName": "drink-add-on",
+    "pluralName": "drink-add-ons",
+    "displayName": "Drink Add-On",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "drink_items": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::drink-item.drink-item",
+      "mappedBy": "add_ons"
+    },
+    "price": {
+      "required": true,
+      "type": "decimal"
+    }
+  }
+}

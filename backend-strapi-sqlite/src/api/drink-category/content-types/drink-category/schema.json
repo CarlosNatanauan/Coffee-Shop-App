@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "drink_categories",
+  "info": {
+    "singularName": "drink-category",
+    "pluralName": "drink-categories",
+    "displayName": "Drink Category"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "drink_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::drink-item.drink-item",
+      "mappedBy": "category"
+    }
+  }
+}
