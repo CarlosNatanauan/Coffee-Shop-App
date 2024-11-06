@@ -84,7 +84,6 @@ class ApiService {
       throw Exception('Failed to delete add-on for document ID: $documentId');
     }
   }
-
   // ---------------------------
   // Category Endpoints
   // ---------------------------

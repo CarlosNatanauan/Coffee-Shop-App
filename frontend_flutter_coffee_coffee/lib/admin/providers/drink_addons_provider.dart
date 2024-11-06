@@ -2,13 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/drinks/drink_addons_model.dart';
 import '../services/api_services.dart';
 
-final drinkAddOnsProvider =
-    StateNotifierProvider<DrinkAddOnsNotifier, List<DrinkAddOn>>((ref) {
-  return DrinkAddOnsNotifier();
+final drinkAddOnProvider =
+    StateNotifierProvider<DrinkAddOnNotifier, List<DrinkAddOn>>((ref) {
+  return DrinkAddOnNotifier();
 });
 
-class DrinkAddOnsNotifier extends StateNotifier<List<DrinkAddOn>> {
-  DrinkAddOnsNotifier() : super([]);
+class DrinkAddOnNotifier extends StateNotifier<List<DrinkAddOn>> {
+  DrinkAddOnNotifier() : super([]);
 
   final ApiService _apiService = ApiService();
 
@@ -17,7 +17,9 @@ class DrinkAddOnsNotifier extends StateNotifier<List<DrinkAddOn>> {
     try {
       final data = await _apiService.getAddOns();
       state = data.map((item) => DrinkAddOn.fromJson(item)).toList();
+      print("Fetched all add-ons successfully.");
     } catch (e) {
+      print("Exception in fetching add-ons: $e");
       throw Exception('Failed to fetch add-ons: $e');
     }
   }
@@ -33,13 +35,36 @@ class DrinkAddOnsNotifier extends StateNotifier<List<DrinkAddOn>> {
   }
 
   // Add a new add-on
-  Future<void> addAddOn(String name, int price) async {
+  Future<void> addAddOn(String addonsName, int addonsPrice) async {
     try {
-      final data = await _apiService.addAddOn(name, price);
+      final data = await _apiService.addAddOn(addonsName, addonsPrice);
       final newAddOn = DrinkAddOn.fromJson(data);
       state = [...state, newAddOn];
     } catch (e) {
       throw Exception('Failed to add add-on: $e');
+    }
+  }
+
+  // Update an add-on by documentId
+  Future<void> updateAddOn(
+      String documentId, String newAddonsName, int newAddonsPrice) async {
+    try {
+      final updatedData = await _apiService.updateAddOn(documentId, {
+        'data': {
+          'addons_name': newAddonsName,
+          'addons_price': newAddonsPrice,
+        }
+      });
+      final updatedAddOn = DrinkAddOn.fromJson(updatedData);
+
+      state = state.map((addOn) {
+        if (addOn.documentId == documentId) {
+          return updatedAddOn.copyWith(selected: addOn.selected);
+        }
+        return addOn;
+      }).toList();
+    } catch (e) {
+      throw Exception('Failed to update add-on: $e');
     }
   }
 

@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
-import '../sub_screens/widgets/addon_floating_edit_add_widget.dart'; // Import the specific floating widget for add-ons
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/drink_addons_provider.dart';
+import 'widgets/addon_floating_edit_add_widget.dart';
 
-class AddOnsScreen extends StatefulWidget {
+class AddOnsScreen extends ConsumerStatefulWidget {
   @override
   _AddOnsScreenState createState() => _AddOnsScreenState();
 }
 
-class _AddOnsScreenState extends State<AddOnsScreen> {
-  List<Map<String, dynamic>> addOns = [
-    {"addons_name": "Extra Shot", "addons_price": 20, "selected": false},
-    {"addons_name": "Soy Milk", "addons_price": 15, "selected": false},
-  ]; // Placeholder data for add-ons
-
+class _AddOnsScreenState extends ConsumerState<AddOnsScreen> {
   bool isFloatingWidgetVisible = false;
   String floatingWidgetMode = "Add"; // "Add" or "Update"
-  int? editIndex;
+  String? editDocumentId;
 
-  void showFloatingWidget({String mode = "Add", int? index}) {
+  void showFloatingWidget({String mode = "Add", String? documentId}) {
     setState(() {
       floatingWidgetMode = mode;
       isFloatingWidgetVisible = true;
-      editIndex = index;
+      editDocumentId = documentId;
     });
   }
 
@@ -30,23 +27,23 @@ class _AddOnsScreenState extends State<AddOnsScreen> {
     });
   }
 
-  void toggleSelection(int index, bool? isSelected) {
-    setState(() {
-      addOns[index]["selected"] = isSelected ?? false;
-    });
+  @override
+  void initState() {
+    super.initState();
+    ref.read(drinkAddOnProvider.notifier).fetchAddOns();
   }
 
   @override
   Widget build(BuildContext context) {
+    final addOns = ref.watch(drinkAddOnProvider);
     double screenHeight = MediaQuery.of(context).size.height;
     double buttonHeight = screenHeight * 0.07;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Ons"),
+        title: Text("Add-Ons"),
         leading: BackButton(
-          onPressed: () =>
-              Navigator.pop(context), // Goes back to AdminDrinksScreen
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Stack(
@@ -57,19 +54,31 @@ class _AddOnsScreenState extends State<AddOnsScreen> {
                 child: ListView.builder(
                   itemCount: addOns.length,
                   itemBuilder: (context, index) {
+                    final addOn = addOns[index];
                     return ListTile(
-                      title: Text(addOns[index]["addons_name"]),
-                      subtitle:
-                          Text("Price: \$${addOns[index]["addons_price"]}"),
+                      title: Text(addOn.addonsName),
+                      subtitle: Text("Price: \$${addOn.addonsPrice}"),
                       leading: Checkbox(
-                        value: addOns[index]["selected"],
-                        onChanged: (bool? selected) =>
-                            toggleSelection(index, selected),
+                        value: addOn.selected,
+                        onChanged: (bool? selected) {
+                          // Toggle the selected state
+                          ref.read(drinkAddOnProvider.notifier).updateAddOn(
+                                addOn.documentId,
+                                addOn.addonsName,
+                                addOn.addonsPrice,
+                              );
+                          ref.read(drinkAddOnProvider.notifier).state = ref
+                              .read(drinkAddOnProvider)
+                              .map((item) => item.documentId == addOn.documentId
+                                  ? item.copyWith(selected: selected ?? false)
+                                  : item)
+                              .toList();
+                        },
                       ),
                       trailing: IconButton(
                         icon: Icon(Icons.edit),
-                        onPressed: () =>
-                            showFloatingWidget(mode: "Update", index: index),
+                        onPressed: () => showFloatingWidget(
+                            mode: "Update", documentId: addOn.documentId),
                       ),
                     );
                   },
@@ -82,12 +91,16 @@ class _AddOnsScreenState extends State<AddOnsScreen> {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: addOns.any((item) => item["selected"])
-                            ? () {
-                                setState(() {
-                                  addOns
-                                      .removeWhere((item) => item["selected"]);
-                                });
+                        onPressed: addOns.any((item) => item.selected)
+                            ? () async {
+                                final selectedAddOns = addOns
+                                    .where((item) => item.selected)
+                                    .toList();
+                                for (var addOn in selectedAddOns) {
+                                  await ref
+                                      .read(drinkAddOnProvider.notifier)
+                                      .deleteAddOn(addOn.documentId);
+                                }
                               }
                             : null,
                         child: Text("Delete"),
@@ -110,7 +123,7 @@ class _AddOnsScreenState extends State<AddOnsScreen> {
               child: GestureDetector(
                 onTap: hideFloatingWidget,
                 child: Container(
-                  color: Colors.black54, // Darkened background
+                  color: Colors.black54,
                 ),
               ),
             ),
@@ -118,29 +131,31 @@ class _AddOnsScreenState extends State<AddOnsScreen> {
             Center(
               child: FloatingEditAddWidgetAddOn(
                 mode: floatingWidgetMode,
-                initialName:
-                    editIndex != null ? addOns[editIndex!]["addons_name"] : "",
-                initialPrice:
-                    editIndex != null ? addOns[editIndex!]["addons_price"] : 0,
+                initialName: editDocumentId != null
+                    ? addOns
+                        .firstWhere(
+                            (addOn) => addOn.documentId == editDocumentId)
+                        .addonsName
+                    : "",
+                initialPrice: editDocumentId != null
+                    ? addOns
+                        .firstWhere(
+                            (addOn) => addOn.documentId == editDocumentId)
+                        .addonsPrice
+                    : 0,
                 onCancel: hideFloatingWidget,
-                onSave: (newName, newPrice) {
-                  setState(() {
-                    if (floatingWidgetMode == "Add") {
-                      addOns.add({
-                        "addons_name": newName,
-                        "addons_price": newPrice,
-                        "selected": false
-                      });
-                    } else if (floatingWidgetMode == "Update" &&
-                        editIndex != null) {
-                      addOns[editIndex!] = {
-                        "addons_name": newName,
-                        "addons_price": newPrice,
-                        "selected": false
-                      };
-                    }
-                    hideFloatingWidget();
-                  });
+                onSave: (newName, newPrice) async {
+                  if (floatingWidgetMode == "Add") {
+                    await ref
+                        .read(drinkAddOnProvider.notifier)
+                        .addAddOn(newName, newPrice);
+                  } else if (floatingWidgetMode == "Update" &&
+                      editDocumentId != null) {
+                    await ref
+                        .read(drinkAddOnProvider.notifier)
+                        .updateAddOn(editDocumentId!, newName, newPrice);
+                  }
+                  hideFloatingWidget();
                 },
               ),
             ),

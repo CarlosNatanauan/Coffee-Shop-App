@@ -59,7 +59,6 @@ class FloatingEditAddWidgetAddOn extends StatelessWidget {
                       if (price != null) {
                         onSave(nameController.text, price);
                       } else {
-                        // Handle invalid price input
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("Please enter a valid price")),
                         );
