@@ -27,13 +27,16 @@ class DrinkItem {
   });
 
   factory DrinkItem.fromJson(Map<String, dynamic> json) {
+    print("Parsing DrinkItem from JSON: $json"); // Debugging output
     return DrinkItem(
       id: json['id'] ?? 0,
-      documentId: json['documentId'] ?? '',
+      documentId: json['documentId'] ?? '', // Set a default if `null`
       addOnsEnabled: json['addOnsEnabled'] ?? false,
       drinkName: json['drink_name'] ?? 'Unknown Drink',
       drinkDescription: json['drink_description'] ?? 'No Description',
-      drinkCategory: DrinkCategory.fromJson(json['drink_category']),
+      drinkCategory: json['drink_category'] != null
+          ? DrinkCategory.fromJson(json['drink_category'])
+          : DrinkCategory(id: 0, documentId: '', categoryName: ''),
       drinkAddOns: (json['drink_add_ons'] as List<dynamic>?)
               ?.map((item) => DrinkAddOn.fromJson(item))
               .toList() ??
@@ -49,17 +52,21 @@ class DrinkItem {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({bool isNew = false, bool isUpdate = false}) {
     return {
-      'id': id,
-      'documentId': documentId,
+      if (!isNew && !isUpdate) 'id': id, // Exclude 'id' in update payload
       'addOnsEnabled': addOnsEnabled,
       'drink_name': drinkName,
       'drink_description': drinkDescription,
-      'drink_category': drinkCategory.toJson(),
-      'drink_add_ons': drinkAddOns.map((addOn) => addOn.toJson()).toList(),
-      'sizeOptions': sizeOptions.map((size) => size.toJson()).toList(),
-      'drink_image': drinkImages.map((image) => image.toJson()).toList(),
+      'drink_category': drinkCategory.id,
+      'drink_add_ons': drinkAddOns.map((addOn) => addOn.id).toList(),
+      'sizeOptions': sizeOptions
+          .map((size) => {
+                'drink_size': size.drinkSize,
+                'drink_price': size.drinkPrice,
+              })
+          .toList(),
+      'drink_image': drinkImages.map((image) => image.id).toList(),
     };
   }
 }

@@ -35,19 +35,38 @@ class DrinkItemNotifier extends StateNotifier<List<DrinkItem>> {
     }
   }
 
-  // Update a drink item by documentId
-  Future<void> updateDrinkItem(
-      String documentId, DrinkItem updatedDrinkItem) async {
+// Add a new drink item
+  Future<void> addDrinkItem(DrinkItem drinkItem) async {
     try {
-      final updatedData = await _apiService.updateDrinkItem(
-          documentId, updatedDrinkItem.toJson());
-      state = state.map((item) {
-        if (item.documentId == documentId) {
-          return updatedData;
-        }
-        return item;
-      }).toList();
-      print("Updated drink item successfully in state.");
+      final newDrink =
+          await _apiService.createDrinkItem(drinkItem.toJson(isNew: true));
+
+      if (newDrink != null) {
+        state = [...state, newDrink];
+        print("Added new drink item successfully.");
+      } else {
+        throw Exception('API returned null for the new drink item');
+      }
+    } catch (e) {
+      print("Exception in adding drink item: $e");
+      throw Exception('Failed to add drink item: $e');
+    }
+  }
+
+  // Update an existing drink item by its document ID (expects a Map<String, dynamic>)
+  Future<void> updateDrinkItem(
+      String documentId, Map<String, dynamic> drinkData) async {
+    try {
+      final updatedDrink =
+          await _apiService.updateDrinkItem(documentId, drinkData);
+      if (updatedDrink != null) {
+        state = state
+            .map((item) => item.documentId == documentId ? updatedDrink : item)
+            .toList();
+        print("Updated drink item successfully.");
+      } else {
+        throw Exception('API returned null for the updated drink item');
+      }
     } catch (e) {
       print("Exception in updating drink item: $e");
       throw Exception('Failed to update drink item: $e');
@@ -58,6 +77,7 @@ class DrinkItemNotifier extends StateNotifier<List<DrinkItem>> {
   Future<void> deleteDrinkItem(String documentId) async {
     try {
       await _apiService.deleteDrinkItem(documentId);
+      // Remove the deleted item from the state
       state = state.where((item) => item.documentId != documentId).toList();
       print("Deleted drink item successfully in state.");
     } catch (e) {
