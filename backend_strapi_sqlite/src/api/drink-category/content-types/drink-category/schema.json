@@ -20,7 +20,7 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::drink-item.drink-item",
-      "mappedBy": "category"
+      "mappedBy": "drink_category"
     }
   }
 }

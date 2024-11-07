@@ -16,15 +16,15 @@
       "type": "string",
       "required": true
     },
+    "addons_price": {
+      "required": true,
+      "type": "decimal"
+    },
     "drink_items": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::drink-item.drink-item",
-      "mappedBy": "add_ons"
-    },
-    "addons_price": {
-      "required": true,
-      "type": "decimal"
+      "mappedBy": "drink_add_ons"
     }
   }
 }

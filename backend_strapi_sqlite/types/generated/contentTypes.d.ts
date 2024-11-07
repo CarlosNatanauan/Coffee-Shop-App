@@ -449,31 +449,31 @@ export interface ApiDrinkItemDrinkItem extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    add_ons: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::drink-add-on.drink-add-on'
-    >;
     addOnsEnabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    category: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::drink-category.drink-category'
-    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.String;
-    image: Schema.Attribute.Media<
+    drink_add_ons: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::drink-add-on.drink-add-on'
+    >;
+    drink_category: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::drink-category.drink-category'
+    >;
+    drink_description: Schema.Attribute.String & Schema.Attribute.Required;
+    drink_image: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios',
       true
     > &
       Schema.Attribute.Required;
+    drink_name: Schema.Attribute.String & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::drink-item.drink-item'
     > &
       Schema.Attribute.Private;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     sizeOptions: Schema.Attribute.Component<'size-option.size-option', true>;
     updatedAt: Schema.Attribute.DateTime;

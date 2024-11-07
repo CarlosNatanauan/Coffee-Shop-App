@@ -10,7 +10,7 @@
       "type": "string",
       "required": true
     },
-    "item_price": {
+    "drink_price": {
       "type": "decimal",
       "required": true
     }

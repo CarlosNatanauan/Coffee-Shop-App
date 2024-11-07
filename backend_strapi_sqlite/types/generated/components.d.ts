@@ -7,8 +7,8 @@ export interface SizeOptionSizeOption extends Struct.ComponentSchema {
     displayName: 'Size Option';
   };
   attributes: {
+    drink_price: Schema.Attribute.Decimal & Schema.Attribute.Required;
     drink_size: Schema.Attribute.String & Schema.Attribute.Required;
-    item_price: Schema.Attribute.Decimal & Schema.Attribute.Required;
   };
 }
 

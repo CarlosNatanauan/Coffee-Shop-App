@@ -12,14 +12,15 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "name": {
+    "drink_name": {
       "type": "string",
       "required": true
     },
-    "description": {
-      "type": "string"
+    "drink_description": {
+      "type": "string",
+      "required": true
     },
-    "image": {
+    "drink_image": {
       "type": "media",
       "multiple": true,
       "required": true,
@@ -30,7 +31,7 @@
         "audios"
       ]
     },
-    "category": {
+    "drink_category": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::drink-category.drink-category",
@@ -40,7 +41,7 @@
       "type": "boolean",
       "default": false
     },
-    "add_ons": {
+    "drink_add_ons": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::drink-add-on.drink-add-on",

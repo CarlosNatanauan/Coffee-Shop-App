@@ -3,6 +3,7 @@ import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
 import 'admin_drinks_screen.dart';
 import 'admin_foods_screen.dart';
 import 'admin_settings_screen.dart';
+import 'admin_home_screen.dart';
 
 class AdminMainPage extends StatefulWidget {
   @override
@@ -20,6 +21,7 @@ class _AdminMainPageState extends State<AdminMainPage> {
         physics: NeverScrollableScrollPhysics(),
         controller: controller,
         children: [
+          AdminHomeScreen(),
           AdminDrinksScreen(), // Screen for drinks
           AdminFoodsScreen(), // Screen for foods
           SettingsScreen(), // Add a settings screen as needed
@@ -39,6 +41,10 @@ class _AdminMainPageState extends State<AdminMainPage> {
         activeColor: Color(0xFF01579B),
         selectedIndex: selectedIndex,
         barItems: [
+          BarItem(
+            icon: Icons.home,
+            title: 'Home',
+          ),
           BarItem(
             icon: Icons.coffee,
             title: 'Drinks',
