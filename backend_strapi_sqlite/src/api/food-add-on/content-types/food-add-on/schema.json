@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "food_add_ons",
+  "info": {
+    "singularName": "food-add-on",
+    "pluralName": "food-add-ons",
+    "displayName": "Food Add-On"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "addons_name": {
+      "type": "string",
+      "required": true
+    },
+    "addons_price": {
+      "type": "decimal",
+      "required": true
+    },
+    "food_items": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::food-item.food-item",
+      "mappedBy": "food_add_ons"
+    }
+  }
+}

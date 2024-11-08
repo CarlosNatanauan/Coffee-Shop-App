@@ -482,6 +482,116 @@ export interface ApiDrinkItemDrinkItem extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiFoodAddOnFoodAddOn extends Struct.CollectionTypeSchema {
+  collectionName: 'food_add_ons';
+  info: {
+    displayName: 'Food Add-On';
+    pluralName: 'food-add-ons';
+    singularName: 'food-add-on';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    addons_name: Schema.Attribute.String & Schema.Attribute.Required;
+    addons_price: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    food_items: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::food-item.food-item'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::food-add-on.food-add-on'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFoodCategoryFoodCategory
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'food_categories';
+  info: {
+    displayName: 'Food Category';
+    pluralName: 'food-categories';
+    singularName: 'food-category';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    category_name: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    food_items: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::food-item.food-item'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::food-category.food-category'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFoodItemFoodItem extends Struct.CollectionTypeSchema {
+  collectionName: 'food_items';
+  info: {
+    displayName: 'Food Item';
+    pluralName: 'food-items';
+    singularName: 'food-item';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    addOnsEnabled: Schema.Attribute.Boolean;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    food_add_ons: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::food-add-on.food-add-on'
+    >;
+    food_category: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::food-category.food-category'
+    >;
+    food_description: Schema.Attribute.String & Schema.Attribute.Required;
+    food_image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    > &
+      Schema.Attribute.Required;
+    food_name: Schema.Attribute.String & Schema.Attribute.Required;
+    food_price: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::food-item.food-item'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -990,6 +1100,9 @@ declare module '@strapi/strapi' {
       'api::drink-add-on.drink-add-on': ApiDrinkAddOnDrinkAddOn;
       'api::drink-category.drink-category': ApiDrinkCategoryDrinkCategory;
       'api::drink-item.drink-item': ApiDrinkItemDrinkItem;
+      'api::food-add-on.food-add-on': ApiFoodAddOnFoodAddOn;
+      'api::food-category.food-category': ApiFoodCategoryFoodCategory;
+      'api::food-item.food-item': ApiFoodItemFoodItem;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

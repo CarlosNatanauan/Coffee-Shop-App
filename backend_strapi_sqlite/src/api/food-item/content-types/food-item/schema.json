@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "food_items",
+  "info": {
+    "singularName": "food-item",
+    "pluralName": "food-items",
+    "displayName": "Food Item"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "food_name": {
+      "type": "string",
+      "required": true
+    },
+    "food_description": {
+      "type": "string",
+      "required": true
+    },
+    "food_image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true,
+      "required": true
+    },
+    "food_category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::food-category.food-category",
+      "inversedBy": "food_items"
+    },
+    "addOnsEnabled": {
+      "type": "boolean",
+      "required": false
+    },
+    "food_add_ons": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::food-add-on.food-add-on",
+      "inversedBy": "food_items"
+    },
+    "food_price": {
+      "type": "decimal",
+      "required": true
+    }
+  }
+}
