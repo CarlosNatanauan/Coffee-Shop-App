@@ -4,78 +4,181 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'sub_screens/drinks/drinks_category_screen.dart';
 import 'sub_screens/drinks/drinks_add_ons_screen.dart';
 import 'sub_screens/drinks/add_edit_drink_item.dart';
-import '../providers/drinks/drink_item_provider.dart'; // Import your provider
+import '../providers/drinks/drink_item_provider.dart';
+import '../providers/drinks/drink_category_provider.dart';
+import '../providers/drinks/selected_drink_category_provider.dart';
+import '../models/drinks/drink_category_model.dart';
 
-class AdminDrinksScreen extends ConsumerWidget {
+class AdminDrinksScreen extends ConsumerStatefulWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Access drink items from the provider
-    final drinkItems = ref.watch(drinkItemProvider);
-    const String strapiBaseUrl =
-        "http://192.168.0.111:1337"; // Replace with your actual Strapi server URL
+  _AdminDrinksScreenState createState() => _AdminDrinksScreenState();
+}
 
-    // Fetch items if the list is empty
-    if (drinkItems.isEmpty) {
-      ref.read(drinkItemProvider.notifier).fetchAllDrinkItems();
+class _AdminDrinksScreenState extends ConsumerState<AdminDrinksScreen> {
+  bool _isFirstLoad = true;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchInitialData();
+  }
+
+  Future<void> _fetchInitialData() async {
+    await ref.read(drinkCategoryProvider.notifier).fetchCategories();
+    await ref.read(drinkItemProvider.notifier).fetchAllDrinkItems();
+
+    final categories = ref.read(drinkCategoryProvider);
+    if (categories.isNotEmpty) {
+      ref.read(selectedDrinkCategoryProvider.notifier).state =
+          -1; // "All Items" selected by default
     }
+    setState(() {
+      _isFirstLoad = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final drinkItems = ref.watch(drinkItemProvider);
+    final categories = ref.watch(drinkCategoryProvider);
+    final selectedCategory = ref.watch(selectedDrinkCategoryProvider);
+    const String strapiBaseUrl = "http://192.168.0.111:1337";
+
+    // Define the "All Items" category
+    final allItemsCategory = DrinkCategory(
+      id: -1,
+      documentId: 'all',
+      categoryName: 'All Items',
+    );
+
+    // Add "All Items" to the category list
+    final allCategories = [allItemsCategory, ...categories];
+
+    // Filter drinks by selected category and search text
+    final filteredDrinks = drinkItems
+        .where((drink) =>
+            (selectedCategory == -1 ||
+                drink.drinkCategory.id == selectedCategory) &&
+            (drink.drinkName.toLowerCase().contains(_searchText.toLowerCase())))
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Admin Drinks"),
       ),
-      body: drinkItems.isEmpty
+      body: _isFirstLoad
           ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: drinkItems.length,
-              itemBuilder: (context, index) {
-                final drink = drinkItems[index];
-                return ListTile(
-                  leading: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: Image.network(
-                      drink.drinkImages.isNotEmpty
-                          ? '$strapiBaseUrl${drink.drinkImages[0].thumbnailUrl ?? drink.drinkImages[0].originalUrl}'
-                          : 'https://via.placeholder.com/150',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Icon(Icons.broken_image, size: 50);
-                      },
+          : Column(
+              children: [
+                // Search Bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search items...',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
                     ),
+                    onChanged: (text) {
+                      setState(() {
+                        _searchText = text;
+                      });
+                    },
                   ),
-                  title: Text(drink.drinkName),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  AddEditDrinkItem(drinkItem: drink),
-                            ),
-                          ).then((_) {
-                            // Refresh drink items when returning to the screen
+                ),
+                // Category List at the top
+                SizedBox(
+                  height: 60,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: allCategories.length,
+                    itemBuilder: (context, index) {
+                      final category = allCategories[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ChoiceChip(
+                          label: Text(category.categoryName),
+                          selected: selectedCategory == category.id,
+                          onSelected: (bool selected) {
                             ref
-                                .read(drinkItemProvider.notifier)
-                                .fetchAllDrinkItems();
-                          });
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () async {
-                          await ref
-                              .read(drinkItemProvider.notifier)
-                              .deleteDrinkItem(drink.documentId);
-                        },
-                      ),
-                    ],
+                                .read(selectedDrinkCategoryProvider.notifier)
+                                .state = selected ? category.id : -1;
+                          },
+                          selectedColor: Theme.of(context).primaryColor,
+                          labelStyle: TextStyle(
+                            color: selectedCategory == category.id
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+                Expanded(
+                  child: filteredDrinks.isEmpty
+                      ? Center(
+                          child: Text("No items available in this category"),
+                        )
+                      : ListView.builder(
+                          itemCount: filteredDrinks.length,
+                          itemBuilder: (context, index) {
+                            final drink = filteredDrinks[index];
+                            return ListTile(
+                              leading: SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: Image.network(
+                                  drink.drinkImages.isNotEmpty
+                                      ? '$strapiBaseUrl${drink.drinkImages[0].thumbnailUrl ?? drink.drinkImages[0].originalUrl}'
+                                      : 'https://via.placeholder.com/150',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(Icons.broken_image, size: 50);
+                                  },
+                                ),
+                              ),
+                              title: Text(drink.drinkName),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.edit),
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AddEditDrinkItem(
+                                                  drinkItem: drink),
+                                        ),
+                                      ).then((_) {
+                                        ref
+                                            .read(drinkItemProvider.notifier)
+                                            .fetchAllDrinkItems();
+                                      });
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () async {
+                                      await ref
+                                          .read(drinkItemProvider.notifier)
+                                          .deleteDrinkItem(drink.documentId);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Padding(
@@ -100,7 +203,6 @@ class AdminDrinksScreen extends ConsumerWidget {
                     builder: (context) => AddEditDrinkItem(),
                   ),
                 ).then((_) {
-                  // Refresh drink items when returning to the screen
                   ref.read(drinkItemProvider.notifier).fetchAllDrinkItems();
                 });
               },

@@ -39,7 +39,7 @@ class _AddOnsScreenState extends ConsumerState<FoodAddOnsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add-Ons"),
+        title: Text("Food Add-Ons"),
         leading: BackButton(
           onPressed: () => Navigator.pop(context),
         ),

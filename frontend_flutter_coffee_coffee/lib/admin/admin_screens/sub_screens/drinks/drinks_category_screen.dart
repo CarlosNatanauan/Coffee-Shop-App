@@ -39,7 +39,7 @@ class _CategoryScreenState extends ConsumerState<DrinksCategoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Category"),
+        title: Text("Drink Category"),
         leading: BackButton(
           onPressed: () => Navigator.pop(context),
         ),
