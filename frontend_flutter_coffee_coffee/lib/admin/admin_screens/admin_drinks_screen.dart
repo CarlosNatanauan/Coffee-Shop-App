@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import '../admin_screens/sub_screens/category_screen.dart';
-import '../admin_screens/sub_screens/add_ons_screen.dart';
-import '../admin_screens/sub_screens/add_edit_drink_item.dart';
-import '../providers/drink_item_provider.dart'; // Import your provider
+import 'sub_screens/drinks/drinks_category_screen.dart';
+import 'sub_screens/drinks/drinks_add_ons_screen.dart';
+import 'sub_screens/drinks/add_edit_drink_item.dart';
+import '../providers/drinks/drink_item_provider.dart'; // Import your provider
 
 class AdminDrinksScreen extends ConsumerWidget {
   @override
@@ -111,7 +111,7 @@ class AdminDrinksScreen extends ConsumerWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CategoryScreen(),
+                  builder: (context) => DrinksCategoryScreen(),
                 ),
               ),
             ),
@@ -121,7 +121,7 @@ class AdminDrinksScreen extends ConsumerWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddOnsScreen(),
+                  builder: (context) => DrinkAddOnsScreen(),
                 ),
               ),
             ),

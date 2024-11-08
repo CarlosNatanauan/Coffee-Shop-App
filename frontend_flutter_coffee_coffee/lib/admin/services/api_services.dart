@@ -2,20 +2,19 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import '../models/drinks/item/drink_item_model.dart';
+import '../models/foods/item/food_item_model.dart';
 import 'package:http_parser/http_parser.dart';
 
 class ApiService {
   static const String baseUrl = 'http://192.168.0.111:1337/api';
-
-  // ---------------------------
-  // Drink Item Endpoints
-  // ---------------------------
-
   static const String uploadUrl = '$baseUrl/upload';
   static const String mediaFilesUrl = '$uploadUrl/files';
-
   final String authToken =
       '7d1b600fa1d6f2a3cee1e25903882821be78610d8abd63d9b0d6ded09185f7104269fa890ef0b01bef145a550851ba14ae5b7f347980de67e402a5ee68bbfdfafb7d13e599f1bb613f06a1b8db0bde93e4fff1d6d3e141b06de2226fca8e795f1dbfbd3da5c47c2d770dc744c2d41da2cd900935362eeb8aa87784d8a14a44fa';
+
+  // ---------------------------
+  // Media Management
+  // ---------------------------
 
   Future<List<dynamic>> getMediaFiles() async {
     try {
@@ -78,8 +77,11 @@ class ApiService {
       return null;
     }
   }
+  // ---------------------------
+  // Drink Item Endpoints
+  // ---------------------------
 
-// Create a new drink item
+  // Create a new drink item
   Future<DrinkItem?> createDrinkItem(Map<String, dynamic> drinkData) async {
     print("Sending drink data to backend: ${json.encode({"data": drinkData})}");
 
@@ -195,11 +197,11 @@ class ApiService {
   }
 
   // ---------------------------
-  // Add-Ons Endpoints
+  // Add-Ons Endpoints (Drinks)
   // ---------------------------
 
   // Fetch all add-ons
-  Future<List<dynamic>> getAddOns() async {
+  Future<List<dynamic>> getAddOnsDrinks() async {
     final response = await http.get(Uri.parse('$baseUrl/drink-add-ons'));
 
     if (response.statusCode == 200) {
@@ -212,7 +214,7 @@ class ApiService {
   }
 
   // Fetch an individual add-on by documentId
-  Future<Map<String, dynamic>> getAddOnById(String documentId) async {
+  Future<Map<String, dynamic>> getAddOnByIdDrinks(String documentId) async {
     final response =
         await http.get(Uri.parse('$baseUrl/drink-add-ons/$documentId'));
 
@@ -226,7 +228,7 @@ class ApiService {
   }
 
   // Add a new add-on
-  Future<dynamic> addAddOn(String name, int price) async {
+  Future<dynamic> addAddOnDrinks(String name, int price) async {
     final response = await http.post(
       Uri.parse('$baseUrl/drink-add-ons'),
       headers: {'Content-Type': 'application/json'},
@@ -247,7 +249,7 @@ class ApiService {
   }
 
   // Update an add-on by documentId
-  Future<Map<String, dynamic>> updateAddOn(
+  Future<Map<String, dynamic>> updateAddOnDrinks(
       String documentId, Map<String, dynamic> data) async {
     final response = await http.put(
       Uri.parse('$baseUrl/drink-add-ons/$documentId'),
@@ -264,7 +266,7 @@ class ApiService {
   }
 
   // Delete an add-on by documentId
-  Future<void> deleteAddOn(String documentId) async {
+  Future<void> deleteAddOnDrinks(String documentId) async {
     final response =
         await http.delete(Uri.parse('$baseUrl/drink-add-ons/$documentId'));
 
@@ -279,7 +281,7 @@ class ApiService {
   // ---------------------------
 
   // Fetch all categories
-  Future<List<dynamic>> getCategories() async {
+  Future<List<dynamic>> getCategoriesDrinks() async {
     final response = await http.get(Uri.parse('$baseUrl/drink-categories'));
 
     if (response.statusCode == 200) {
@@ -292,7 +294,7 @@ class ApiService {
   }
 
   // Fetch an individual category by documentId
-  Future<Map<String, dynamic>> getCategoryById(String documentId) async {
+  Future<Map<String, dynamic>> getCategoryByIdDrinks(String documentId) async {
     final response =
         await http.get(Uri.parse('$baseUrl/drink-categories/$documentId'));
 
@@ -306,7 +308,7 @@ class ApiService {
   }
 
   // Add a new category
-  Future<dynamic> addCategory(String categoryName) async {
+  Future<dynamic> addCategoryDrinks(String categoryName) async {
     final response = await http.post(
       Uri.parse('$baseUrl/drink-categories'),
       headers: {'Content-Type': 'application/json'},
@@ -326,7 +328,7 @@ class ApiService {
   }
 
   // Update a category by documentId
-  Future<Map<String, dynamic>> updateCategory(
+  Future<Map<String, dynamic>> updateCategoryDrinks(
       String documentId, Map<String, dynamic> data) async {
     final response = await http.put(
       Uri.parse('$baseUrl/drink-categories/$documentId'),
@@ -343,9 +345,291 @@ class ApiService {
   }
 
   // Delete a category by documentId
-  Future<void> deleteCategory(String documentId) async {
+  Future<void> deleteCategoryDrinks(String documentId) async {
     final response =
         await http.delete(Uri.parse('$baseUrl/drink-categories/$documentId'));
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      print("Deleted category with documentId: $documentId.");
+    } else {
+      throw Exception('Failed to delete category for document ID: $documentId');
+    }
+  }
+
+// -------------- Food methods starts here --------------
+
+// ---------------------------
+// Food Item Endpoints
+// ---------------------------
+
+// Create a new food item
+  Future<FoodItem?> createFoodItem(Map<String, dynamic> foodData) async {
+    print("Sending food data to backend: ${json.encode({"data": foodData})}");
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/food-items'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      },
+      body: json.encode({"data": foodData}), // Wraps once in "data"
+    );
+
+    print("Create Response Status Code: ${response.statusCode}");
+    print("Create Response Body: ${response.body}");
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = json.decode(response.body);
+      print("Created food item successfully on backend.");
+      return FoodItem.fromJson(data['data']);
+    } else {
+      print("Failed to create food item. Status Code: ${response.statusCode}");
+      print("Response Body: ${response.body}");
+      return null;
+    }
+  }
+
+// Fetch all food items with populated fields
+  Future<List<FoodItem>> getAllFoodItems() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/food-items?populate=*&pagination[pageSize]=100'),
+      headers: {
+        'Authorization': 'Bearer $authToken',
+      },
+    );
+
+    print("Fetch All Response Status Code: ${response.statusCode}");
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print("Fetched all food items successfully.");
+      return (data['data'] as List<dynamic>)
+          .map((item) => FoodItem.fromJson(item))
+          .toList();
+    } else {
+      print("Failed to load food items. Status Code: ${response.statusCode}");
+      throw Exception('Failed to load food items');
+    }
+  }
+
+// Fetch an individual food item by documentId with populated fields
+  Future<FoodItem?> getFoodItemById(String documentId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/food-items/$documentId?populate=*'),
+      headers: {
+        'Authorization': 'Bearer $authToken',
+      },
+    );
+
+    print("Fetch Single Item Response Status Code: ${response.statusCode}");
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print("Fetched food item with documentId: $documentId successfully.");
+      return FoodItem.fromJson(data['data']);
+    } else {
+      print("Failed to load food item for document ID: $documentId");
+      print("Response Body: ${response.body}");
+      return null;
+    }
+  }
+
+// Update a food item by documentId
+  Future<FoodItem?> updateFoodItem(
+      String documentId, Map<String, dynamic> data) async {
+    final payload = {"data": data}; // Wrap data in "data" key
+
+    print("Updating food item with data: ${json.encode(payload)}");
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/food-items/$documentId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      },
+      body: json.encode(payload),
+    );
+
+    print("Update Response Status Code: ${response.statusCode}");
+
+    if (response.statusCode == 200) {
+      final updatedData = json.decode(response.body);
+      print("Updated food item with documentId: $documentId successfully.");
+      return FoodItem.fromJson(updatedData['data']);
+    } else {
+      print("Failed to update food item for document ID: $documentId");
+      print("Response Body: ${response.body}");
+      return null;
+    }
+  }
+
+// Delete a food item by documentId
+  Future<void> deleteFoodItem(String documentId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/food-items/$documentId'),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      print("Deleted food item with documentId: $documentId successfully.");
+    } else {
+      throw Exception(
+          'Failed to delete food item for document ID: $documentId');
+    }
+  }
+
+// ---------------------------
+// Add-Ons Endpoints (Foods)
+// ---------------------------
+
+// Fetch all add-ons
+  Future<List<dynamic>> getAddOnsFoods() async {
+    final response = await http.get(Uri.parse('$baseUrl/food-add-ons'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print("Fetched all add-ons successfully.");
+      return data['data'];
+    } else {
+      throw Exception('Failed to load add-ons');
+    }
+  }
+
+  // Fetch an individual add-on by documentId
+  Future<Map<String, dynamic>> getAddOnByIdFoods(String documentId) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/food-add-ons/$documentId'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print("Fetched add-on with documentId: $documentId successfully.");
+      return data['data'];
+    } else {
+      throw Exception('Failed to load add-on for document ID: $documentId');
+    }
+  }
+
+  // Add a new add-on
+  Future<dynamic> addAddOnFoods(String name, int price) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/food-add-ons'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'data': {
+          'addons_name': name,
+          'addons_price': price,
+        },
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print("Added new add-on: $name with price $price.");
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to create add-on');
+    }
+  }
+
+  // Update an add-on by documentId
+  Future<Map<String, dynamic>> updateAddOnFoods(
+      String documentId, Map<String, dynamic> data) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/food-add-ons/$documentId'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(data),
+    );
+
+    if (response.statusCode == 200) {
+      print("Updated add-on with documentId: $documentId.");
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to update add-on for document ID: $documentId');
+    }
+  }
+
+  // Delete an add-on by documentId
+  Future<void> deleteAddOnFoods(String documentId) async {
+    final response =
+        await http.delete(Uri.parse('$baseUrl/food-add-ons/$documentId'));
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      print("Deleted add-on with documentId: $documentId.");
+    } else {
+      throw Exception('Failed to delete add-on for document ID: $documentId');
+    }
+  }
+
+  // ---------------------------
+  // Category Endpoints (Foods)
+  // ---------------------------
+
+  // Fetch all categories
+  Future<List<dynamic>> getCategoriesFoods() async {
+    final response = await http.get(Uri.parse('$baseUrl/food-categories'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print("Fetched all categories successfully.");
+      return data['data'];
+    } else {
+      throw Exception('Failed to load categories');
+    }
+  }
+
+  // Fetch an individual category by documentId
+  Future<Map<String, dynamic>> getCategoryByIdFoods(String documentId) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/food-categories/$documentId'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print("Fetched category with documentId: $documentId successfully.");
+      return data['data'];
+    } else {
+      throw Exception('Failed to load category for document ID: $documentId');
+    }
+  }
+
+  // Add a new category
+  Future<dynamic> addCategoryFoods(String categoryName) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/food-categories'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'data': {
+          'category_name': categoryName,
+        },
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print("Added new category: $categoryName.");
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to create category');
+    }
+  }
+
+  // Update a category by documentId
+  Future<Map<String, dynamic>> updateCategoryFoods(
+      String documentId, Map<String, dynamic> data) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/food-categories/$documentId'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(data),
+    );
+
+    if (response.statusCode == 200) {
+      print("Updated category with documentId: $documentId.");
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to update category for document ID: $documentId');
+    }
+  }
+
+  // Delete a category by documentId
+  Future<void> deleteCategoryFoods(String documentId) async {
+    final response =
+        await http.delete(Uri.parse('$baseUrl/food-categories/$documentId'));
 
     if (response.statusCode == 200 || response.statusCode == 204) {
       print("Deleted category with documentId: $documentId.");

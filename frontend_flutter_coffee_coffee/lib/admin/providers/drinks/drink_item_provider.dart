@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/drinks/item/drink_item_model.dart';
-import '../services/api_services.dart';
+import '../../models/drinks/item/drink_item_model.dart';
+import '../../services/api_services.dart';
 
 final drinkItemProvider =
     StateNotifierProvider<DrinkItemNotifier, List<DrinkItem>>((ref) {

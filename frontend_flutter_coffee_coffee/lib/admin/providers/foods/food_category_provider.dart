@@ -1,22 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/drinks/drink_category_model.dart';
-import '../services/api_services.dart';
+import '../../models/foods/food_category_model.dart';
+import '../../services/api_services.dart';
 
-final drinkCategoryProvider =
-    StateNotifierProvider<DrinkCategoryNotifier, List<DrinkCategory>>((ref) {
-  return DrinkCategoryNotifier();
+final foodCategoryProvider =
+    StateNotifierProvider<FoodCategoryNotifier, List<FoodCategory>>((ref) {
+  return FoodCategoryNotifier();
 });
 
-class DrinkCategoryNotifier extends StateNotifier<List<DrinkCategory>> {
-  DrinkCategoryNotifier() : super([]);
+class FoodCategoryNotifier extends StateNotifier<List<FoodCategory>> {
+  FoodCategoryNotifier() : super([]);
 
   final ApiService _apiService = ApiService();
 
   // Fetch all categories
   Future<void> fetchCategories() async {
     try {
-      final data = await _apiService.getCategories();
-      state = data.map((item) => DrinkCategory.fromJson(item)).toList();
+      final data = await _apiService.getCategoriesFoods();
+      state = data.map((item) => FoodCategory.fromJson(item)).toList();
       print("Fetched all categories successfully.");
     } catch (e) {
       print("Exception in fetching categories: $e");
@@ -25,10 +25,10 @@ class DrinkCategoryNotifier extends StateNotifier<List<DrinkCategory>> {
   }
 
   // Fetch an individual category by documentId
-  Future<DrinkCategory?> fetchCategoryById(String documentId) async {
+  Future<FoodCategory?> fetchCategoryById(String documentId) async {
     try {
-      final data = await _apiService.getCategoryById(documentId);
-      return DrinkCategory.fromJson(data);
+      final data = await _apiService.getCategoryByIdFoods(documentId);
+      return FoodCategory.fromJson(data);
     } catch (e) {
       throw Exception('Failed to fetch category by documentId: $e');
     }
@@ -37,9 +37,9 @@ class DrinkCategoryNotifier extends StateNotifier<List<DrinkCategory>> {
   // Add a new category
   Future<void> addCategory(String categoryName) async {
     try {
-      final data = await _apiService.addCategory(categoryName);
+      final data = await _apiService.addCategoryFoods(categoryName);
       final newCategory =
-          DrinkCategory.fromJson(data); // Do not wrap in {'data': data}
+          FoodCategory.fromJson(data); // Do not wrap in {'data': data}
       state = [...state, newCategory];
     } catch (e) {
       throw Exception('Failed to add category: $e');
@@ -50,12 +50,12 @@ class DrinkCategoryNotifier extends StateNotifier<List<DrinkCategory>> {
   Future<void> updateCategory(String documentId, String newCategoryName) async {
     try {
       // Assuming that the API service has an `updateCategory` method
-      final updatedData = await _apiService.updateCategory(documentId, {
+      final updatedData = await _apiService.updateCategoryFoods(documentId, {
         'data': {
           'category_name': newCategoryName,
         }
       });
-      final updatedCategory = DrinkCategory.fromJson(updatedData);
+      final updatedCategory = FoodCategory.fromJson(updatedData);
 
       state = state.map((category) {
         if (category.documentId == documentId) {
@@ -71,7 +71,7 @@ class DrinkCategoryNotifier extends StateNotifier<List<DrinkCategory>> {
   // Delete a category by documentId
   Future<void> deleteCategory(String documentId) async {
     try {
-      await _apiService.deleteCategory(documentId);
+      await _apiService.deleteCategoryFoods(documentId);
       state =
           state.where((category) => category.documentId != documentId).toList();
     } catch (e) {

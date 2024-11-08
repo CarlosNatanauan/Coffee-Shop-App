@@ -1,22 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/drinks/drink_addons_model.dart';
-import '../services/api_services.dart';
+import '../../models/foods/food_addons_models.dart';
+import '../../services/api_services.dart';
 
-final drinkAddOnProvider =
-    StateNotifierProvider<DrinkAddOnNotifier, List<DrinkAddOn>>((ref) {
-  return DrinkAddOnNotifier();
+final foodAddOnProvider =
+    StateNotifierProvider<FoodAddOnNotifier, List<FoodAddOn>>((ref) {
+  return FoodAddOnNotifier();
 });
 
-class DrinkAddOnNotifier extends StateNotifier<List<DrinkAddOn>> {
-  DrinkAddOnNotifier() : super([]);
+class FoodAddOnNotifier extends StateNotifier<List<FoodAddOn>> {
+  FoodAddOnNotifier() : super([]);
 
   final ApiService _apiService = ApiService();
 
   // Fetch all add-ons
   Future<void> fetchAddOns() async {
     try {
-      final data = await _apiService.getAddOns();
-      state = data.map((item) => DrinkAddOn.fromJson(item)).toList();
+      final data = await _apiService.getAddOnsFoods();
+      state = data.map((item) => FoodAddOn.fromJson(item)).toList();
       print("Fetched all add-ons successfully.");
     } catch (e) {
       print("Exception in fetching add-ons: $e");
@@ -25,10 +25,10 @@ class DrinkAddOnNotifier extends StateNotifier<List<DrinkAddOn>> {
   }
 
   // Fetch an individual add-on by documentId
-  Future<DrinkAddOn?> fetchAddOnById(String documentId) async {
+  Future<FoodAddOn?> fetchAddOnById(String documentId) async {
     try {
-      final data = await _apiService.getAddOnById(documentId);
-      return DrinkAddOn.fromJson(data);
+      final data = await _apiService.getAddOnByIdFoods(documentId);
+      return FoodAddOn.fromJson(data);
     } catch (e) {
       throw Exception('Failed to fetch add-on by documentId: $e');
     }
@@ -37,8 +37,8 @@ class DrinkAddOnNotifier extends StateNotifier<List<DrinkAddOn>> {
   // Add a new add-on
   Future<void> addAddOn(String addonsName, int addonsPrice) async {
     try {
-      final data = await _apiService.addAddOn(addonsName, addonsPrice);
-      final newAddOn = DrinkAddOn.fromJson(data);
+      final data = await _apiService.addAddOnFoods(addonsName, addonsPrice);
+      final newAddOn = FoodAddOn.fromJson(data);
       state = [...state, newAddOn];
     } catch (e) {
       throw Exception('Failed to add add-on: $e');
@@ -49,13 +49,13 @@ class DrinkAddOnNotifier extends StateNotifier<List<DrinkAddOn>> {
   Future<void> updateAddOn(
       String documentId, String newAddonsName, int newAddonsPrice) async {
     try {
-      final updatedData = await _apiService.updateAddOn(documentId, {
+      final updatedData = await _apiService.updateAddOnFoods(documentId, {
         'data': {
           'addons_name': newAddonsName,
           'addons_price': newAddonsPrice,
         }
       });
-      final updatedAddOn = DrinkAddOn.fromJson(updatedData);
+      final updatedAddOn = FoodAddOn.fromJson(updatedData);
 
       state = state.map((addOn) {
         if (addOn.documentId == documentId) {
@@ -71,7 +71,7 @@ class DrinkAddOnNotifier extends StateNotifier<List<DrinkAddOn>> {
   // Delete an add-on by documentId
   Future<void> deleteAddOn(String documentId) async {
     try {
-      await _apiService.deleteAddOn(documentId);
+      await _apiService.deleteAddOnFoods(documentId);
       state = state.where((addOn) => addOn.documentId != documentId).toList();
     } catch (e) {
       throw Exception('Failed to delete add-on: $e');
