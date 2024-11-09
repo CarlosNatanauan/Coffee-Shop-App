@@ -161,14 +161,15 @@ class _DrinkDetailedScreenState extends ConsumerState<DrinkDetailedScreen> {
                       ),
                     ),
                     SizedBox(height: 16),
+// Size Options (Aligned to the start, with rounded corners)
 
-                    // Size Options (Aligned to the start, with rounded corners)
+// Size Options (Aligned to the start, with rounded corners)
                     Wrap(
                       alignment: WrapAlignment.start,
                       spacing: 6.0,
                       children: widget.drinkItem.sizeOptions.map((sizeOption) {
                         final isSelected = selectedSize == sizeOption.drinkSize;
-                        return ChoiceChip(
+                        return FilterChip(
                           label: Text(
                             sizeOption.drinkSize,
                             style: TextStyle(
@@ -186,12 +187,14 @@ class _DrinkDetailedScreenState extends ConsumerState<DrinkDetailedScreen> {
                           },
                           selectedColor: Color.fromARGB(255, 81, 132, 110),
                           backgroundColor: Color.fromARGB(255, 253, 228, 228),
+                          checkmarkColor:
+                              Colors.white, // Set checkmark color to white
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16.0),
                             side: BorderSide(
                               color: isSelected
                                   ? Color.fromARGB(255, 81, 132, 110)
-                                  : Colors.grey, // Updated border color
+                                  : Colors.grey,
                               width: 1.5,
                             ),
                           ),
@@ -229,7 +232,7 @@ class _DrinkDetailedScreenState extends ConsumerState<DrinkDetailedScreen> {
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey[800],
+                                      color: Colors.grey[600],
                                     ),
                                   ),
                                   Icon(addOnsVisible
@@ -265,6 +268,7 @@ class _DrinkDetailedScreenState extends ConsumerState<DrinkDetailedScreen> {
                                   ),
                                 ),
                               SizedBox(height: 6),
+                              // Drink Add-Ons (Aligned to the start, with rounded corners)
                               Wrap(
                                 alignment: WrapAlignment.start,
                                 spacing: 4.0,
@@ -301,6 +305,8 @@ class _DrinkDetailedScreenState extends ConsumerState<DrinkDetailedScreen> {
                                         110), // Color when selected
                                     backgroundColor:
                                         Color.fromARGB(255, 254, 240, 240),
+                                    checkmarkColor: Colors
+                                        .white, // Set checkmark color to white
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16.0),
                                       side: BorderSide(
@@ -314,6 +320,7 @@ class _DrinkDetailedScreenState extends ConsumerState<DrinkDetailedScreen> {
                                   );
                                 }).toList(),
                               ),
+
                               SizedBox(height: 8),
                             ],
                           ],
@@ -327,7 +334,7 @@ class _DrinkDetailedScreenState extends ConsumerState<DrinkDetailedScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey[800],
+                        color: Colors.grey[600],
                       ),
                     ),
                     SizedBox(height: 8),
@@ -359,9 +366,9 @@ class _DrinkDetailedScreenState extends ConsumerState<DrinkDetailedScreen> {
                   Text(
                     '\$${totalPrice.toStringAsFixed(2)}',
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 81, 132, 110)),
                   ),
                   Row(
                     children: [

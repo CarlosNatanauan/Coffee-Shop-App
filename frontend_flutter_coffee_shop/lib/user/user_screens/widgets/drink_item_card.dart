@@ -34,7 +34,7 @@ class DrinkItemCard extends StatelessWidget {
           // Drink Image with Padding
           Padding(
             padding: const EdgeInsets.fromLTRB(
-                14, 8, 14, 4), // Padding around the image
+                16, 8, 16, 4), // Padding around the image
             child: ClipRRect(
               borderRadius:
                   BorderRadius.circular(8.0), // Rounded corners for image
@@ -101,7 +101,7 @@ class DrinkItemCard extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                Icon(Icons.add_box_rounded, color: Colors.white),
+                Icon(Icons.add_circle, color: Colors.white),
               ],
             ),
           ),
