@@ -1,5 +1,6 @@
+// lib/splash_screen.dart
 import 'package:flutter/material.dart';
-import 'admin/admin_screens/admin_main_page.dart';
+import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -10,16 +11,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToHome();
+    _navigateToOnboarding();
   }
 
-  _navigateToHome() async {
+  _navigateToOnboarding() async {
     // Simulate a network request or loading time
     await Future.delayed(Duration(seconds: 1));
-    // Navigate to the admin main page
+    // Navigate to the onboarding screen
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => AdminMainPage()),
+      MaterialPageRoute(builder: (context) => OnboardingScreen()),
     );
   }
 
