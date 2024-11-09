@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/drinks/drink_item_model.dart';
-import '../../models/drinks/drink_size_option.model.dart';
-import '../../models/drinks/drink_addons_model.dart';
+import '../../../models/drinks/drink_item_model.dart';
+import '../../../models/drinks/drink_size_option.model.dart';
+import '../../../models/drinks/drink_addons_model.dart';
 
 // Define selectedSizeProvider using StateProvider.family to make it specific to each DrinkItem
 final selectedSizeProvider =

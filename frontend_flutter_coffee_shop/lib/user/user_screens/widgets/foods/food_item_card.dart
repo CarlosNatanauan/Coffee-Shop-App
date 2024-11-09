@@ -1,11 +1,10 @@
-// drink_item_card.dart
 import 'package:flutter/material.dart';
-import '../../models/drinks/drink_item_model.dart';
+import '../../../models/foods/food_item_model.dart';
 
-class DrinkItemCard extends StatelessWidget {
-  final DrinkItem drinkItem;
+class FoodItemCard extends StatelessWidget {
+  final FoodItem foodItem;
 
-  const DrinkItemCard({Key? key, required this.drinkItem}) : super(key: key);
+  const FoodItemCard({Key? key, required this.foodItem}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +14,6 @@ class DrinkItemCard extends StatelessWidget {
           ? 'http://192.168.0.111:1337$relativeUrl'
           : 'https://via.placeholder.com/100'; // Fallback placeholder
     }
-
-    // Get the first available size price
-    final firstSizePrice = drinkItem.sizeOptions.isNotEmpty
-        ? drinkItem.sizeOptions.first.drinkPrice
-        : 0.0;
 
     return Card(
       color: Color.fromARGB(255, 255, 247, 247),
@@ -31,7 +25,7 @@ class DrinkItemCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Drink Image with Padding
+          // Food Image with Padding
           Padding(
             padding: const EdgeInsets.fromLTRB(
                 16, 8, 16, 4), // Padding around the image
@@ -39,8 +33,8 @@ class DrinkItemCard extends StatelessWidget {
               borderRadius:
                   BorderRadius.circular(8.0), // Rounded corners for image
               child: Image.network(
-                getImageUrl(drinkItem.drinkImages.isNotEmpty
-                    ? drinkItem.drinkImages[0].originalUrl
+                getImageUrl(foodItem.foodImages.isNotEmpty
+                    ? foodItem.foodImages[0].originalUrl
                     : null), // Use fallback if no image available
                 width:
                     double.infinity, // Make image full-width within the padding
@@ -49,14 +43,14 @@ class DrinkItemCard extends StatelessWidget {
               ),
             ),
           ),
-          // Drink Name and Description
+          // Food Name and Description
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  drinkItem.drinkName,
+                  foodItem.foodName,
                   maxLines: 1, // Restrict to 1 line
                   overflow:
                       TextOverflow.ellipsis, // Add ellipsis if text is too long
@@ -66,7 +60,7 @@ class DrinkItemCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  drinkItem.drinkDescription,
+                  foodItem.foodDescription,
                   maxLines: 1, // Restrict to 1 line
                   overflow:
                       TextOverflow.ellipsis, // Add ellipsis if text is too long
@@ -93,7 +87,7 @@ class DrinkItemCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '\$${firstSizePrice.toStringAsFixed(2)}', // Display only the price of the first available size
+                  '\$${foodItem.foodPrice.toStringAsFixed(2)}', // Display the food price
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,

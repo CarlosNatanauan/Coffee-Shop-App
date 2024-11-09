@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'user_cart_screen.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'user_menu_screen.dart';
 import 'user_profile_screen.dart';
-import 'user_food_screen.dart';
-import 'user_drink_screen.dart';
 import 'user_order_screen.dart';
 
 class UserMainPage extends StatefulWidget {
@@ -12,66 +10,68 @@ class UserMainPage extends StatefulWidget {
 }
 
 class _UserMainPageState extends State<UserMainPage> {
-  int _page = 0;
-  GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
-  PageController _pageController = PageController(initialPage: 0);
+  PersistentTabController _controller =
+      PersistentTabController(initialIndex: 0);
 
-  final List<Widget> _pages = [
-    DrinkScreen(),
-    FoodScreen(),
-    OrderScreen(),
-    CartScreen(),
-    ProfileScreen(),
-  ];
-
-  void _onPageChanged(int index) {
-    setState(() {
-      _page = index;
-    });
+  List<Widget> _buildScreens() {
+    return [
+      MenuScreen(),
+      OrderScreen(),
+      ProfileScreen(),
+    ];
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _page = index;
-      _pageController.jumpToPage(index);
-    });
+  List<PersistentBottomNavBarItem> _navBarsItems() {
+    return [
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.fastfood),
+        title: ("Menu"),
+        iconSize: 23.0,
+        textStyle: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400),
+        activeColorPrimary: Color.fromARGB(255, 81, 132, 110),
+        activeColorSecondary: Colors.white,
+        inactiveColorPrimary: Color.fromARGB(255, 81, 132, 110),
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.history),
+        title: ("Orders"),
+        iconSize: 23.0,
+        textStyle: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400),
+        activeColorPrimary: Color.fromARGB(255, 81, 132, 110),
+        activeColorSecondary: Colors.white,
+        inactiveColorPrimary: Color.fromARGB(255, 81, 132, 110),
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.person),
+        title: ("Profile"),
+        iconSize: 23.0,
+        textStyle: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400),
+        activeColorPrimary: Color.fromARGB(255, 81, 132, 110),
+        activeColorSecondary: Colors.white,
+        inactiveColorPrimary: Color.fromARGB(255, 81, 132, 110),
+      ),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      bottomNavigationBar: CurvedNavigationBar(
-        key: _bottomNavigationKey,
-        index: _page,
-        height: 68,
-        items: <Widget>[
-          Icon(
-            Icons.coffee,
-            size: 30,
-            color: Color.fromARGB(255, 81, 132, 110),
-          ),
-          Icon(Icons.fastfood,
-              size: 30, color: Color.fromARGB(255, 81, 132, 110)),
-          Icon(Icons.shopping_cart,
-              size: 30, color: Color.fromARGB(255, 81, 132, 110)),
-          Icon(Icons.history,
-              size: 30, color: Color.fromARGB(255, 81, 132, 110)),
-          Icon(Icons.person,
-              size: 30, color: Color.fromARGB(255, 81, 132, 110)),
-        ],
-        color: Color.fromARGB(255, 254, 240, 240),
-        buttonBackgroundColor: Color.fromARGB(255, 244, 255, 250),
-        backgroundColor: Colors.transparent,
-        animationCurve: Curves.easeInOut,
-        animationDuration: Duration(milliseconds: 120),
-        onTap: _onItemTapped,
+    return PersistentTabView(
+      context,
+      controller: _controller,
+      screens: _buildScreens(),
+      items: _navBarsItems(),
+      confineToSafeArea: true,
+      backgroundColor: Colors.white,
+      handleAndroidBackButtonPress: true,
+      resizeToAvoidBottomInset: true,
+      stateManagement: true,
+      hideNavigationBarWhenKeyboardAppears: true,
+      decoration: NavBarDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        colorBehindNavBar: Colors.white,
       ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: _onPageChanged,
-        children: _pages,
-      ),
+      popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
+      navBarStyle: NavBarStyle.style7,
     );
   }
 }

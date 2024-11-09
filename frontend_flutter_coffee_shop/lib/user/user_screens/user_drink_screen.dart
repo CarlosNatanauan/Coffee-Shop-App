@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/drinks/drink_category_provider.dart';
 import '../providers/drinks/drink_item_provider.dart';
-import './widgets/category_text.dart';
-import './widgets/drink_item_card.dart';
+import 'widgets/drinks/category_text.dart';
+import 'widgets/drinks/drink_item_card.dart';
 import '../models/drinks/drink_item_model.dart';
-import './widgets/drink_detailed.dart'; // Import the detailed screen file
+import 'widgets/drinks/drink_detailed.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 final selectedCategoryProvider = StateProvider<int>((ref) => 0);
 final searchQueryProvider = StateProvider<String>((ref) => '');
@@ -37,10 +38,6 @@ class DrinkScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 253, 228, 228),
-      appBar: AppBar(
-        title: Text('Drinks'),
-        backgroundColor: Color.fromARGB(255, 253, 228, 228),
-      ),
       body: Column(
         children: [
           // Search Bar
@@ -78,7 +75,7 @@ class DrinkScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Categories',
+                  'Drink Categories',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -134,13 +131,15 @@ class DrinkScreen extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
-                            Navigator.push(
+                            PersistentNavBarNavigator.pushNewScreen(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => DrinkDetailedScreen(
-                                  drinkItem: filteredDrinkItems[index],
-                                ),
+                              screen: DrinkDetailedScreen(
+                                drinkItem: filteredDrinkItems[index],
                               ),
+                              withNavBar:
+                                  false, // Hide the bottom nav bar on the detailed screen
+                              pageTransitionAnimation:
+                                  PageTransitionAnimation.cupertino,
                             );
                           },
                           child: DrinkItemCard(
