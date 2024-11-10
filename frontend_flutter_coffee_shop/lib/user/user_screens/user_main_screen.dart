@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'user_cart_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'user_menu_screen.dart';
 import 'user_profile_screen.dart';
@@ -16,6 +17,7 @@ class _UserMainPageState extends State<UserMainPage> {
   List<Widget> _buildScreens() {
     return [
       MenuScreen(),
+      CartScreen(),
       OrderScreen(),
       ProfileScreen(),
     ];
@@ -26,6 +28,15 @@ class _UserMainPageState extends State<UserMainPage> {
       PersistentBottomNavBarItem(
         icon: Icon(Icons.fastfood),
         title: ("Menu"),
+        iconSize: 23.0,
+        textStyle: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400),
+        activeColorPrimary: Color.fromARGB(255, 81, 132, 110),
+        activeColorSecondary: Colors.white,
+        inactiveColorPrimary: Color.fromARGB(255, 81, 132, 110),
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.shopping_cart),
+        title: ("Cart"),
         iconSize: 23.0,
         textStyle: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400),
         activeColorPrimary: Color.fromARGB(255, 81, 132, 110),
@@ -61,7 +72,7 @@ class _UserMainPageState extends State<UserMainPage> {
       screens: _buildScreens(),
       items: _navBarsItems(),
       confineToSafeArea: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 255, 247, 247),
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: true,
       stateManagement: true,

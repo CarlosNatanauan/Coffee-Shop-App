@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class FloatingEditAddWidgetAddOn extends StatelessWidget {
   final String mode; // "Add" or "Update"
   final String initialName;
-  final int initialPrice;
+  final double initialPrice; // Changed to double for decimal support
   final VoidCallback onCancel;
-  final Function(String, int) onSave;
+  final Function(String, double) onSave; // Changed int to double
 
   const FloatingEditAddWidgetAddOn({
     required this.mode,
@@ -55,7 +55,7 @@ class FloatingEditAddWidgetAddOn extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      int? price = int.tryParse(priceController.text);
+                      double? price = double.tryParse(priceController.text);
                       if (price != null) {
                         onSave(nameController.text, price);
                       } else {

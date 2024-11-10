@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/drinks/drink_category_provider.dart';
 import '../providers/drinks/drink_item_provider.dart';
+import '../providers/refresh_provider.dart'; // Import providers.dart for refreshProvider
 import 'widgets/drinks/category_text.dart';
 import 'widgets/drinks/drink_item_card.dart';
 import '../models/drinks/drink_item_model.dart';
@@ -12,13 +13,44 @@ final selectedCategoryProvider = StateProvider<int>((ref) => 0);
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
 class DrinkScreen extends ConsumerWidget {
+  final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController =
+      ScrollController(); // Add ScrollController
+
+  DrinkScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Listen for changes in the refreshProvider
+    ref.listen<bool>(refreshProvider, (_, __) {
+      // Reload categories and items when refresh is triggered
+      ref.read(drinkCategoryProvider.notifier).fetchCategories();
+      ref.read(drinkItemProvider.notifier).fetchAllDrinkItems();
+
+      // Reset the selected category to "All Drinks" (index 0)
+      ref.read(selectedCategoryProvider.notifier).state = 0;
+
+      // Scroll back to the start of the category list
+      _scrollController.animateTo(
+        0, // Scroll to the start position
+        duration: Duration(milliseconds: 300), // Smooth scroll duration
+        curve: Curves.easeInOut, // Smooth scroll curve
+      );
+      // Clear the search query and update the search controller
+      ref.read(searchQueryProvider.notifier).state = '';
+      _searchController.clear();
+    });
+
     final categoryNotifier = ref.read(drinkCategoryProvider.notifier);
     final categories = ref.watch(drinkCategoryProvider);
     final selectedCategoryIndex = ref.watch(selectedCategoryProvider);
     final drinkItems = ref.watch(drinkItemProvider);
     final searchQuery = ref.watch(searchQueryProvider);
+
+    // Keep the controller text in sync with the provider value
+    if (_searchController.text != searchQuery) {
+      _searchController.text = searchQuery;
+    }
 
     // Fetch categories on first build if empty
     if (categories.isEmpty) {
@@ -54,6 +86,7 @@ class DrinkScreen extends ConsumerWidget {
                 ),
               ),
               child: TextField(
+                controller: _searchController, // Attach the controller here
                 onChanged: (value) {
                   ref.read(searchQueryProvider.notifier).state = value;
                 },
@@ -77,20 +110,22 @@ class DrinkScreen extends ConsumerWidget {
                 Text(
                   'Drink Categories',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(66, 66, 66, 1),
+                    color: Colors.grey[700],
                   ),
                 ),
               ],
             ),
           ),
-          // Category Selector
+          // Category Selector with ScrollController
           SizedBox(
             height: 40,
             child: categories.isEmpty
                 ? Center(child: CircularProgressIndicator())
                 : ListView.builder(
+                    controller:
+                        _scrollController, // Attach the scroll controller here
                     scrollDirection: Axis.horizontal,
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                     itemCount: categories.length,

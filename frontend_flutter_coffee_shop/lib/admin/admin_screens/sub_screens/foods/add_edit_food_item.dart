@@ -113,7 +113,8 @@ class _AddEditFoodItemState extends ConsumerState<AddEditFoodItem> {
                 addonsName: '',
                 addonsPrice: 0))
             .toList(),
-        foodPrice: double.parse(_priceController.text),
+        foodPrice:
+            double.tryParse(_priceController.text) ?? 0.0, // Parsing as double
         foodImages: imageId != null
             ? [FoodImage(id: imageId, documentId: '', originalUrl: '')]
             : widget.foodItem?.foodImages ?? [],

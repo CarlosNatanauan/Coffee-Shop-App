@@ -22,7 +22,7 @@ class DrinkItemCard extends StatelessWidget {
         : 0.0;
 
     return Card(
-      color: Color.fromARGB(255, 255, 247, 247),
+      color: Color.fromARGB(255, 255, 255, 255),
       elevation: 4.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -101,7 +101,8 @@ class DrinkItemCard extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                Icon(Icons.add_circle, color: Colors.white),
+                Icon(Icons.add_circle,
+                    color: Color.fromARGB(255, 255, 247, 247)),
               ],
             ),
           ),

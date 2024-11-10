@@ -7,18 +7,54 @@ import 'widgets/foods/food_item_card.dart';
 import '../models/foods/food_item_model.dart';
 import './widgets/foods/food_datailed.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import '../providers/refresh_provider.dart'; // Import providers.dart
 
 final selectedFoodCategoryProvider = StateProvider<int>((ref) => 0);
 final foodSearchQueryProvider = StateProvider<String>((ref) => '');
 
 class FoodScreen extends ConsumerWidget {
+  final TextEditingController _foodSearchController = TextEditingController();
+  final ScrollController _scrollController =
+      ScrollController(); // Add ScrollController
+
+  FoodScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Listen for changes in the refreshProvider
+    ref.listen<bool>(refreshProvider, (_, __) {
+      // Reload categories and items when refresh is triggered
+      ref.read(foodCategoryProvider.notifier).fetchCategories();
+      ref.read(foodItemProvider.notifier).fetchAllFoodItems();
+
+      // Reset the selected category to "All Foods" (index 0)
+      ref.read(selectedFoodCategoryProvider.notifier).state = 0;
+
+      // Clear the search query and update the search controller
+      ref.read(foodSearchQueryProvider.notifier).state = '';
+      _foodSearchController.clear();
+
+      // Scroll back to the start of the category list
+      _scrollController.animateTo(
+        0, // Scroll to the start position
+        duration: Duration(milliseconds: 300), // Smooth scroll duration
+        curve: Curves.easeInOut, // Smooth scroll curve
+      );
+      // Clear the search query and update the search controller
+      ref.read(foodSearchQueryProvider.notifier).state = '';
+      _foodSearchController.clear();
+    });
+
     final categoryNotifier = ref.read(foodCategoryProvider.notifier);
     final categories = ref.watch(foodCategoryProvider);
     final selectedCategoryIndex = ref.watch(selectedFoodCategoryProvider);
     final foodItems = ref.watch(foodItemProvider);
     final searchQuery = ref.watch(foodSearchQueryProvider);
+
+    // Keep the controller text in sync with the provider value
+    if (_foodSearchController.text != searchQuery) {
+      _foodSearchController.text = searchQuery;
+    }
 
     // Fetch categories on first build if empty
     if (categories.isEmpty) {
@@ -54,6 +90,7 @@ class FoodScreen extends ConsumerWidget {
                 ),
               ),
               child: TextField(
+                controller: _foodSearchController, // Attach the controller here
                 onChanged: (value) {
                   ref.read(foodSearchQueryProvider.notifier).state = value;
                 },
@@ -77,20 +114,22 @@ class FoodScreen extends ConsumerWidget {
                 Text(
                   'Food Categories',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(66, 66, 66, 1),
+                    color: Colors.grey[700],
                   ),
                 ),
               ],
             ),
           ),
-          // Category Selector
+          // Category Selector with ScrollController
           SizedBox(
             height: 40,
             child: categories.isEmpty
                 ? Center(child: CircularProgressIndicator())
                 : ListView.builder(
+                    controller:
+                        _scrollController, // Attach the scroll controller here
                     scrollDirection: Axis.horizontal,
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                     itemCount: categories.length,

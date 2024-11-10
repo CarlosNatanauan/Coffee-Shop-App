@@ -55,7 +55,8 @@ class _AddOnsScreenState extends ConsumerState<FoodAddOnsScreen> {
                 final addOn = addOns[index];
                 return ListTile(
                   title: Text(addOn.addonsName),
-                  subtitle: Text("Price: \$${addOn.addonsPrice}"),
+                  subtitle: Text(
+                      "Price: \$${addOn.addonsPrice.toStringAsFixed(2)}"), // Ensure price shows decimals
                   leading: Checkbox(
                     value: addOn.selected,
                     onChanged: (bool? selected) {
@@ -146,7 +147,7 @@ class _AddOnsScreenState extends ConsumerState<FoodAddOnsScreen> {
                         .firstWhere(
                             (addOn) => addOn.documentId == editDocumentId)
                         .addonsPrice
-                    : 0,
+                    : 0.0, // Changed to double (initialPrice now accepts double)
                 onCancel: hideFloatingWidget,
                 onSave: (newName, newPrice) async {
                   if (floatingWidgetMode == "Add") {

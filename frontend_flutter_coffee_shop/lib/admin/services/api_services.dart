@@ -228,7 +228,7 @@ class ApiService {
   }
 
   // Add a new add-on
-  Future<dynamic> addAddOnDrinks(String name, int price) async {
+  Future<dynamic> addAddOnDrinks(String name, double price) async {
     final response = await http.post(
       Uri.parse('$baseUrl/drink-add-ons'),
       headers: {'Content-Type': 'application/json'},
@@ -509,7 +509,7 @@ class ApiService {
   }
 
   // Add a new add-on
-  Future<dynamic> addAddOnFoods(String name, int price) async {
+  Future<dynamic> addAddOnFoods(String name, double price) async {
     final response = await http.post(
       Uri.parse('$baseUrl/food-add-ons'),
       headers: {'Content-Type': 'application/json'},

@@ -356,6 +356,7 @@ class _DrinkDetailedScreenState extends ConsumerState<DrinkDetailedScreen> {
 
           // Bottom Action Area with Total, Buy Now, and Add to Cart in one line
           Container(
+            height: 55,
             color: Color.fromARGB(
                 255, 254, 240, 240), // Set your desired background color here
             child: Padding(
@@ -378,13 +379,13 @@ class _DrinkDetailedScreenState extends ConsumerState<DrinkDetailedScreen> {
                         },
                         child: Text(
                           'Buy Now',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 81, 132, 110),
                           minimumSize: Size(100, 40),
                           padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                         ),
                       ),
                       SizedBox(width: 5),
@@ -394,13 +395,13 @@ class _DrinkDetailedScreenState extends ConsumerState<DrinkDetailedScreen> {
                         },
                         child: Text(
                           'Add to Cart',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 81, 132, 110),
                           minimumSize: Size(100, 40),
                           padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                         ),
                       ),
                     ],

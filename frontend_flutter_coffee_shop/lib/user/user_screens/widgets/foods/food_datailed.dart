@@ -294,6 +294,7 @@ class _FoodDetailedScreenState extends ConsumerState<FoodDetailedScreen> {
 
           // Bottom Action Area with Total, Buy Now, and Add to Cart in one line
           Container(
+            height: 55,
             color: Color.fromARGB(
                 255, 254, 240, 240), // Set your desired background color here
             child: Padding(

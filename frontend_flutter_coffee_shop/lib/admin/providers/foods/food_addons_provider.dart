@@ -35,7 +35,7 @@ class FoodAddOnNotifier extends StateNotifier<List<FoodAddOn>> {
   }
 
   // Add a new add-on
-  Future<void> addAddOn(String addonsName, int addonsPrice) async {
+  Future<void> addAddOn(String addonsName, double addonsPrice) async {
     try {
       final data = await _apiService.addAddOnFoods(addonsName, addonsPrice);
       final newAddOn = FoodAddOn.fromJson(data);
@@ -47,7 +47,7 @@ class FoodAddOnNotifier extends StateNotifier<List<FoodAddOn>> {
 
   // Update an add-on by documentId
   Future<void> updateAddOn(
-      String documentId, String newAddonsName, int newAddonsPrice) async {
+      String documentId, String newAddonsName, double newAddonsPrice) async {
     try {
       final updatedData = await _apiService.updateAddOnFoods(documentId, {
         'data': {

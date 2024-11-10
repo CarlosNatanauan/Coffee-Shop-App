@@ -391,18 +391,29 @@ class _AddEditDrinkItemState extends ConsumerState<AddEditDrinkItem> {
                                       contentPadding: EdgeInsets.symmetric(
                                           vertical: 8.0, horizontal: 12.0),
                                     ),
-                                    keyboardType: TextInputType.number,
-                                    onChanged: (value) => setState(() {
-                                      _sizeOptions[index] = SizeOption(
-                                        id: size.id,
-                                        drinkSize: size.drinkSize,
-                                        drinkPrice: int.tryParse(value) ?? 0,
-                                      );
-                                    }),
-                                    validator: (value) =>
-                                        value == null || value.isEmpty
-                                            ? 'Enter a price'
-                                            : null,
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            decimal: true),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        // Parse the value as a double, default to 0.0 if invalid
+                                        _sizeOptions[index] = SizeOption(
+                                          id: size.id,
+                                          drinkSize: size.drinkSize,
+                                          drinkPrice: double.tryParse(value) ??
+                                              0.0, // Parse as double
+                                        );
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Enter a price';
+                                      }
+                                      if (double.tryParse(value) == null) {
+                                        return 'Enter a valid price';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                 ),
                                 IconButton(
