@@ -1,4 +1,5 @@
 // auth_notifier.dart
+
 import 'package:riverpod/riverpod.dart';
 import '../services/auth_service.dart';
 import 'auth_state.dart';
@@ -20,27 +21,35 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   // Login the user
   Future<void> login(String identifier, String password) async {
-    final authToken = await _authService.login(identifier, password);
-    if (authToken != null) {
+    try {
+      final authToken = await _authService.login(identifier, password);
       state = state.copyWith(
         isLoggedIn: true,
-        token: authToken.token,
-        user: authToken.user,
-        errorMessage: null,
+        token: authToken?.token,
+        user: authToken?.user,
+        errorMessage: null, // Clear any previous error
       );
-    } else {
-      state = state.copyWith(errorMessage: "Login failed");
+    } catch (e) {
+      String errorMessage = e.toString();
+
+      // Match exact error messages
+      if (errorMessage.contains("Invalid identifier or password")) {
+        errorMessage = "Invalid identifier or password";
+      } else if (errorMessage.contains("Your account email is not confirmed")) {
+        errorMessage = "Your account email is not confirmed";
+      } else {
+        errorMessage = "An unknown error occurred";
+      }
+
+      // Set the error message in the state
+      state = state.copyWith(errorMessage: errorMessage);
     }
   }
 
   // Logout the user
   Future<void> logout() async {
     await _authService.logout();
-    state = state.copyWith(
-      isLoggedIn: false,
-      token: null,
-      user: null,
-    );
+    state = AuthState(); // Reset to a fresh instance of AuthState
   }
 
   // Check if user is logged in (restore from shared preferences)
@@ -53,5 +62,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
         user: authToken.user,
       );
     }
+  }
+
+  // Clear any existing error message
+  void clearError() {
+    state = state.copyWith(errorMessage: null);
   }
 }

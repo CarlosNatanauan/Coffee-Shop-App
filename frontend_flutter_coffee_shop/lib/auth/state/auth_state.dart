@@ -1,4 +1,4 @@
-// auth_state.dart
+//auth_state.dart
 import '../models/user_model.dart';
 
 class AuthState {
