@@ -10,7 +10,7 @@ class ApiService {
   static const String uploadUrl = '$baseUrl/upload';
   static const String mediaFilesUrl = '$uploadUrl/files';
   final String authToken =
-      '7d1b600fa1d6f2a3cee1e25903882821be78610d8abd63d9b0d6ded09185f7104269fa890ef0b01bef145a550851ba14ae5b7f347980de67e402a5ee68bbfdfafb7d13e599f1bb613f06a1b8db0bde93e4fff1d6d3e141b06de2226fca8e795f1dbfbd3da5c47c2d770dc744c2d41da2cd900935362eeb8aa87784d8a14a44fa';
+      '1579bfdf26486ff421c8fd36db259b0c9b0955aa9b736e557a0761202e1e3eaa1c9fe50d722f4108adc98f376b97f4468d7eda82613d626cef54445fdd43763ca2f2c43a126515cebea4c9981425aaf135d04b2da28dce17bdf89b9471488fc3d592bd4511c8ee276918b8a9117f268d36de75dc319966f52e153d4640fee65b';
 
   // ---------------------------
   // Media Management
